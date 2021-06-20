@@ -104,6 +104,9 @@ public:
     *  
     */
     void Write_to_file(std::string filename) const;
+
+    Vector3D Get_Position() const;
+    Matrix3x3 Get_Orientation() const;
 };
 
 #endif // Rotor_H

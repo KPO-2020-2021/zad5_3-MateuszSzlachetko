@@ -82,6 +82,8 @@ bool Scene::Add_drone(int drone_id, Drone drone)
     Drones[drone_id] = drone;
     Drones[drone_id].Add_files_names(Link);
 
+    Obstacles.push_back(std::make_shared<Drone>(drone));
+
     return true;
 }
 
@@ -232,6 +234,19 @@ bool Scene::Animate(double angle, std::vector<Vector3D> &total_path)
     }
     i = 0;
 
+    std::list<std::shared_ptr<SceneObject>>::iterator obstacle;
+
+    obstacle = Obstacles.begin();
+
+    for (int j = 0; j < Obstacles.size(); obstacle++, j++)
+    {
+        if ((*obstacle)->Check_collision((*Active_drone)))
+        {
+            std::cout << "Drone collides with " << (*obstacle)->Get_typeID() << " " << std::endl;
+            break;
+        }
+    }
+
     Vertical_flight = total_path[0];
     total_path.erase(total_path.begin());
 
@@ -347,7 +362,7 @@ bool Scene::Add_obstacle()
         return false;
     }
     double Radius, Length, Width, Height, Side_Length;
-    int colour;
+    int colour, a = 0;
     double x, y, orientation_angle;
 
     if (Object_type == 1)
@@ -463,9 +478,27 @@ bool Scene::Add_obstacle()
         Plateau plateau(Length, Width, Height);
         plateau.Set_in_scene(x, y, orientation_angle);
 
+        std::list<std::shared_ptr<SceneObject>>::iterator i;
+
+        i = Obstacles.begin();
+
+        for (int j = 0; j < Obstacles.size(); i++, j++)
+        {
+            if ((*i)->Check_collision(plateau))
+            {
+                std::cout << "Object collides with present obstacles" << std::endl;
+                a = 1;
+                break;
+            }
+        }
+        if (a == 1)
+        {
+            plateau.Remove_files_names(Link);
+            break;
+        }
+
         Obstacles.push_back(std::make_shared<Plateau>(plateau));
 
-        std::list<std::shared_ptr<SceneObject>>::iterator i;
         i = Obstacles.end();
         --i;
         (*i)->Add_files_names(Link, colour);
@@ -476,9 +509,27 @@ bool Scene::Add_obstacle()
         RoundMountain rm(Radius, Height);
         rm.Set_in_scene(x, y);
 
+        std::list<std::shared_ptr<SceneObject>>::iterator i;
+
+        i = Obstacles.begin();
+
+        for (int j = 0; j < Obstacles.size(); i++, j++)
+        {
+            if ((*i)->Check_collision(rm))
+            {
+                std::cout << "Object collides with present obstacles" << std::endl;
+                a = 1;
+                break;
+            }
+        }
+        if (a == 1)
+        {
+            rm.Remove_files_names(Link);
+            break;
+        }
+
         Obstacles.push_back(std::make_shared<RoundMountain>(rm));
 
-        std::list<std::shared_ptr<SceneObject>>::iterator i;
         i = Obstacles.end();
         --i;
         (*i)->Add_files_names(Link, colour);
@@ -489,9 +540,27 @@ bool Scene::Add_obstacle()
         Pyramid p(Side_Length, Height);
         p.Set_in_scene(x, y, orientation_angle);
 
+        std::list<std::shared_ptr<SceneObject>>::iterator i;
+
+        i = Obstacles.begin();
+
+        for (int j = 0; j < Obstacles.size(); i++, j++)
+        {
+            if ((*i)->Check_collision(p))
+            {
+                std::cout << "Object collides with present obstacles" << std::endl;
+                a = 1;
+                break;
+            }
+        }
+        if (a == 1)
+        {
+            p.Remove_files_names(Link);
+            break;
+        }
+
         Obstacles.push_back(std::make_shared<Pyramid>(p));
 
-        std::list<std::shared_ptr<SceneObject>>::iterator i;
         i = Obstacles.end();
         --i;
         (*i)->Add_files_names(Link, colour);

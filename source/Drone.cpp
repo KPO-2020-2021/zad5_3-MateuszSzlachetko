@@ -144,7 +144,7 @@ void Drone::Add_files_names(PzG::LaczeDoGNUPlota &Link, int colour)
     }
 }
 
-void Drone::Remove_files_names(PzG::LaczeDoGNUPlota &Link)
+bool Drone::Remove_files_names(PzG::LaczeDoGNUPlota &Link) const
 {
     // whole line for drone's body converted to char *
     Link.UsunNazwePliku((directory + body.Get_name()).c_str());
@@ -154,6 +154,7 @@ void Drone::Remove_files_names(PzG::LaczeDoGNUPlota &Link)
     {
         Link.UsunNazwePliku((directory + rotors[i].Get_name()).c_str());
     }
+    return true;
 }
 
 Drone Drone::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
@@ -168,6 +169,32 @@ Drone Drone::Move(Matrix3x3 &rotation_matrix, Vector3D translation_vector)
     rotors[1].Move(rotation_matrix, translation_vector, directory + rotors[1].Get_name());
     rotors[2].Move(rotation_matrix, translation_vector, directory + rotors[2].Get_name());
     rotors[3].Move(rotation_matrix, translation_vector, directory + rotors[3].Get_name());
+
+    Drone temp = (*this);
+    Rotor temp2;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        temp2 = temp.Get_Rotor(i);
+        Matrix3x3 t = temp2.Get_Orientation();
+        temp2.Rotation(t);
+        temp2.Translate(temp2.Get_Position());
+
+        for (int j = 0; j < 12; ++j)
+        {
+            if (border[0] > temp2[j][0] || (i == 0))
+                border[0] = temp2[j][0];
+
+            if (border[1] < temp2[j][0] || (i == 0))
+                border[1] = temp2[j][0];
+
+            if (border[2] > temp2[j][1] || (i == 0))
+                border[2] = temp2[j][1];
+
+            if (border[3] < temp2[j][1] || (i == 0))
+                border[3] = temp2[j][1];
+        }
+    }
 
     return *this;
 }
@@ -213,6 +240,16 @@ Cuboid Drone::operator[](int index) const
     }
 }
 
+Rotor Drone::Get_Rotor(int index) const
+{
+    if (index < 0 || index > 3)
+        throw std::invalid_argument("Index out of range");
+    else
+    {
+        return rotors[index]; // return copy,which let's us only to read the value
+    }
+}
+
 Vector<double, 2> Drone::Position()
 {
     Vector<double, 2> center, temp1, temp2;
@@ -227,4 +264,14 @@ Vector<double, 2> Drone::Position()
     center = (temp1 + temp2) / 2;
 
     return center;
+}
+
+std::string Drone::Get_typeID() const
+{
+    return std::string(" Drone");
+}
+
+std::string Drone::Get_file_path() const
+{
+    return std::string(" Drone");
 }

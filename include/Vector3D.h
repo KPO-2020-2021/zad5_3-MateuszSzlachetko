@@ -10,5 +10,6 @@
 #include "Vector.h"
 
 typedef Vector<double, 3> Vector3D;
+typedef Vector<double, 4> Vector4D;
 
 #endif // VECTOR3D_H

@@ -198,3 +198,12 @@ Vector3D Rotor::operator[](int index) const
         return vertices[index]; // return copy,which let's us only to read the value
     }
 }
+
+Vector3D Rotor::Get_Position() const
+{
+    return position;
+}
+Matrix3x3 Rotor::Get_Orientation() const
+{
+    return orientation;
+}

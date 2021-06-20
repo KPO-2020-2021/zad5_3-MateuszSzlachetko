@@ -107,6 +107,28 @@ bool RoundMountain::Set_in_scene(double x, double y)
 
     Move(t, Vector3D({x, y, 0}));
 
+    RoundMountain temp = (*this);
+
+    temp.Rotation(orientation);
+    temp.Translate(position);
+
+    for (int i = 0; i < 18; ++i)
+    {
+        if (border[0] > temp.base[i][0] || (i == 0))
+            border[0] = temp.base[i][0];
+
+        if (border[1] < temp.base[i][0] || (i == 0))
+            border[1] = temp.base[i][0];
+
+        if (border[2] > temp.base[i][1] || (i == 0))
+            border[2] = temp.base[i][1];
+
+        if (border[3] < temp.base[i][1] || (i == 0))
+            border[3] = temp.base[i][1];
+    }
+    std::cout << "Border values:" << std::endl;
+    std::cout << border << std::endl;
+
     Write_to_file();
 
     return true;

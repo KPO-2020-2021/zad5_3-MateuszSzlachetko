@@ -6,6 +6,7 @@
 
 #include "Rotor.h"
 #include "Cuboid.h"
+#include "SceneObject.h"
 #include "lacze_do_gnuplota.hh"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -14,7 +15,7 @@
  * 
  * Class which represents a Drone.
  */
-class Drone
+class Drone : public SceneObject
 {
 private:
     Cuboid body;
@@ -84,7 +85,7 @@ public:
     *   
     *   Removes drones files from GNUplot link.
     */
-    void Remove_files_names(PzG::LaczeDoGNUPlota &Link);
+    bool Remove_files_names(PzG::LaczeDoGNUPlota &Link) const override;
 
     /** @fn  Vector<double, 2> Position()
     *   @brief Returns drone's (x,y)
@@ -97,6 +98,12 @@ public:
     *   brief Returns drone's body
     */
     Cuboid operator[](int index) const;
+
+    Rotor Get_Rotor(int index) const;
+
+    std::string Get_typeID() const override;
+
+    std::string Get_file_path() const override;
 };
 
 #endif // DRONE_H

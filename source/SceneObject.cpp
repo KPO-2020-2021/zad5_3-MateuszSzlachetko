@@ -9,6 +9,8 @@ SceneObject::SceneObject()
                              0, 1, 0,
                              0, 0, 1});
 
+    Vector4D border; // x-min x-max y-min y-max
+
     Total_scene_objects++;
 }
 
@@ -51,9 +53,17 @@ bool SceneObject::Add_files_names(PzG::LaczeDoGNUPlota &Link, int colour)
     return true;
 }
 
-bool SceneObject::Remove_files_names(PzG::LaczeDoGNUPlota &Link)
+bool SceneObject::Remove_files_names(PzG::LaczeDoGNUPlota &Link) const
 {
     Link.UsunNazwePliku(File_path.c_str());
     remove(File_path.c_str());
     return true;
+}
+
+bool SceneObject::Check_collision(const SceneObject &obj) const
+{
+    if (border[0] < obj.border[1] && border[1] > obj.border[0] && border[2] < obj.border[3] && border[3] > obj.border[2])
+        return true;
+    else
+        return false;
 }

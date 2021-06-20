@@ -17,6 +17,8 @@ protected:
     Vector3D position;
     Matrix3x3 orientation;
 
+    Vector4D border;
+
     int ID;
 
 public:
@@ -34,9 +36,11 @@ public:
 
     bool Add_files_names(PzG::LaczeDoGNUPlota &Link, int colour);
 
-    bool Remove_files_names(PzG::LaczeDoGNUPlota &Link);
+    virtual bool Remove_files_names(PzG::LaczeDoGNUPlota &Link) const;
 
     static int Get_total() { return Total_scene_objects; };
+
+    virtual bool Check_collision(const SceneObject &obj) const;
 };
 
 #endif // SCENEOBJECT_H

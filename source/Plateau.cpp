@@ -20,6 +20,28 @@ bool Plateau::Set_in_scene(double x, double y, double orientation_angle)
 
     Move(t, Vector3D({x, y, 0}));
 
+    Cuboid temp = body;
+
+    temp.Rotation(orientation);
+    temp.Translate(position);
+
+    for (int i = 0; i < 8; ++i)
+    {
+        if (border[0] > temp[i][0] || (i == 0))
+            border[0] = temp[i][0];
+
+        if (border[1] < temp[i][0] || (i == 0))
+            border[1] = temp[i][0];
+
+        if (border[2] > temp[i][1] || (i == 0))
+            border[2] = temp[i][1];
+
+        if (border[3] < temp[i][1] || (i == 0))
+            border[3] = temp[i][1];
+    }
+    std::cout << "Border values:" << std::endl;
+    std::cout << border << std::endl;
+
     Write_to_file();
 
     return true;
