@@ -7,7 +7,8 @@ Scene::Scene()
 
     Active_drone = NULL;
 
-    Drones = new Drone[2];
+    Drones[0] = std::make_shared<Drone>();
+    Drones[1] = std::make_shared<Drone>();
 
     Link.Inicjalizuj();
     Link.ZmienTrybRys(PzG::TR_3D);
@@ -24,22 +25,22 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-    // Active_drone = NULL;
+    Active_drone = nullptr;
 
-    // if (!Obstacles.empty())
-    // {
-    //     std::list<std::shared_ptr<SceneObject>>::iterator i;
+    if (!Obstacles.empty())
+    {
+        std::list<std::shared_ptr<SceneObject>>::iterator i;
 
-    //     i = Obstacles.begin();
+        i = Obstacles.begin();
 
-    //     for (int j = 0; j < Obstacles.size(); j++, i++)
-    //     {
-    //         std::cout << "Deleting " << (*i)->Get_file_path() << std::endl;
-    //         (*i)->Remove_files_names(Link);
-    //     }
-    // }
+        for (int j = 0; j < Obstacles.size(); j++, i++)
+        {
+            std::cout << "Deleting " << (*i)->Get_file_path() << std::endl;
+            (*i)->Remove_files_names(Link);
+        }
+    }
 
-    // remove(surface.c_str());
+    remove(surface.c_str());
 }
 
 void Scene::Draw_surface(int x_min, int x_max, int y_min, int y_max)
@@ -83,10 +84,10 @@ bool Scene::Add_drone(int drone_id, Drone drone)
     if (drone_id < 0 || drone_id > 1) // amount of drones
         return false;
 
-    Drones[drone_id] = drone;
-    Drones[drone_id].Add_files_names(Link);
+    Drones[drone_id] = std::make_shared<Drone>(drone);
+    Drones[drone_id]->Add_files_names(Link);
 
-    Obstacles.push_back(std::shared_ptr<Drone>(&Drones[drone_id]));
+    Obstacles.push_back(Drones[drone_id]);
 
     return true;
 }
@@ -96,15 +97,15 @@ bool Scene::Remove_drone(int drone_id)
     if (drone_id < 0 || drone_id > 1) // amount of drones
         return false;
 
-    Drones[drone_id].Remove_files_names(Link);
+    Drones[drone_id]->Remove_files_names(Link);
 
     return true;
 }
 
 void Scene::List_drones()
 {
-    std::cout << "0 - Position (x,y) " << Drones[0].Position() << std::endl; // pass x,y values
-    std::cout << "1 - Position (x,y) " << Drones[1].Position() << std::endl;
+    std::cout << "0 - Position (x,y) " << Drones[0]->Position() << std::endl; // pass x,y values
+    std::cout << "1 - Position (x,y) " << Drones[1]->Position() << std::endl;
 }
 
 void Scene::Draw()
@@ -117,7 +118,7 @@ bool Scene::Choose_drone(int index)
     if (index < 0 || index > 1) // amount of drones
         return false;
 
-    Active_drone = &Drones[index];
+    Active_drone = Drones[index].get();
     return true;
 }
 
@@ -269,16 +270,16 @@ bool Scene::Change_colour(int colour)
         return false;
     }
 
-    if (Active_drone == &Drones[0])
+    if (Active_drone == Drones[0].get())
     {
-        Drones[0].Remove_files_names(Link);
-        Drones[0].Add_files_names(Link, colour);
+        Drones[0]->Remove_files_names(Link);
+        Drones[0]->Add_files_names(Link, colour);
     }
 
-    if (Active_drone == &Drones[1])
+    if (Active_drone == Drones[1].get())
     {
-        Drones[1].Remove_files_names(Link);
-        Drones[1].Add_files_names(Link, colour);
+        Drones[1]->Remove_files_names(Link);
+        Drones[1]->Add_files_names(Link, colour);
     }
 
     Draw();

@@ -36,3 +36,8 @@ Możliwość wyboru dowolnego z dostępnych kolorów dla wybranej przeszkody.
 W przeszkodach w których ma to sens oprócz pozycji początkowej można podać kąt orientacji.
 
 Przeszkoda o podstawie zbliżonej do koła.
+
+## Uproszczenia
+
+Kolizja sprawdzana tylko prostokątami.
+

@@ -22,7 +22,7 @@
 class Scene
 {
 private:
-    Drone *Drones;
+    std::shared_ptr<Drone> Drones[2];
 
     Drone *Active_drone;
 
