@@ -53,6 +53,8 @@ Drone::Drone()
     rotors[1].Write_to_file(directory + rotors[1].Get_name());
     rotors[2].Write_to_file(directory + rotors[2].Get_name());
     rotors[3].Write_to_file(directory + rotors[3].Get_name());
+
+    Move(base, Vector3D({0, 0, 0}));
 }
 
 Drone::Drone(Cuboid b, Rotor r)

@@ -12,6 +12,7 @@
 #include <thread>
 #include <list>
 #include <memory>
+#include <random>
 
 /** @class Scene
  * 
@@ -21,7 +22,7 @@
 class Scene
 {
 private:
-    Drone Drones[2];
+    Drone *Drones;
 
     Drone *Active_drone;
 
@@ -39,6 +40,10 @@ public:
     bool Add_obstacle();
 
     bool Remove_obstacle(int index);
+
+    int Rand_num_generator(int d, int u);
+
+    bool Active_drone_collision();
 
     ~Scene();
 

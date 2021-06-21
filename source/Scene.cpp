@@ -7,6 +7,8 @@ Scene::Scene()
 
     Active_drone = NULL;
 
+    Drones = new Drone[2];
+
     Link.Inicjalizuj();
     Link.ZmienTrybRys(PzG::TR_3D);
 
@@ -22,20 +24,22 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-    if (!Obstacles.empty())
-    {
-        std::list<std::shared_ptr<SceneObject>>::iterator i;
+    // Active_drone = NULL;
 
-        i = Obstacles.begin();
+    // if (!Obstacles.empty())
+    // {
+    //     std::list<std::shared_ptr<SceneObject>>::iterator i;
 
-        for (int j = 0; j < Obstacles.size(); j++, i++)
-        {
-            std::cout << "Deleting " << (*i)->Get_file_path() << std::endl;
-            (*i)->Remove_files_names(Link);
-        }
-    }
+    //     i = Obstacles.begin();
 
-    remove(surface.c_str());
+    //     for (int j = 0; j < Obstacles.size(); j++, i++)
+    //     {
+    //         std::cout << "Deleting " << (*i)->Get_file_path() << std::endl;
+    //         (*i)->Remove_files_names(Link);
+    //     }
+    // }
+
+    // remove(surface.c_str());
 }
 
 void Scene::Draw_surface(int x_min, int x_max, int y_min, int y_max)
@@ -82,7 +86,7 @@ bool Scene::Add_drone(int drone_id, Drone drone)
     Drones[drone_id] = drone;
     Drones[drone_id].Add_files_names(Link);
 
-    Obstacles.push_back(std::make_shared<Drone>(drone));
+    Obstacles.push_back(std::shared_ptr<Drone>(&Drones[drone_id]));
 
     return true;
 }
@@ -234,18 +238,7 @@ bool Scene::Animate(double angle, std::vector<Vector3D> &total_path)
     }
     i = 0;
 
-    std::list<std::shared_ptr<SceneObject>>::iterator obstacle;
-
-    obstacle = Obstacles.begin();
-
-    for (int j = 0; j < Obstacles.size(); obstacle++, j++)
-    {
-        if ((*obstacle)->Check_collision((*Active_drone)))
-        {
-            std::cout << "Drone collides with " << (*obstacle)->Get_typeID() << " " << std::endl;
-            break;
-        }
-    }
+    Active_drone_collision();
 
     Vertical_flight = total_path[0];
     total_path.erase(total_path.begin());
@@ -264,6 +257,7 @@ bool Scene::Animate(double angle, std::vector<Vector3D> &total_path)
     std::this_thread::sleep_for(std::chrono::nanoseconds(500000000));
     Link.UsunNazwePliku("../data/path.dat");
     Draw();
+
     return true;
 }
 
@@ -620,6 +614,91 @@ bool Scene::Print_list_of_obstacles()
     {
         std::cout << " " << j << ". " << (*i)->Get_typeID() << " (" << (*i)->Get_position() << " )" << std::endl;
     }
+
+    return true;
+}
+
+int Scene::Rand_num_generator(int d, int u)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());                      // seed the generator
+    std::uniform_int_distribution<> distr(d, u); //  range
+
+    return distr(gen);
+}
+
+bool Scene::Active_drone_collision()
+{
+    std::list<std::shared_ptr<SceneObject>>::iterator obstacle;
+
+    obstacle = Obstacles.begin();
+
+    int i = 0, j = 0, col = 0;
+
+    Matrix3x3 rot;
+    Vector3D forward;
+
+    for (j = 0; j < Obstacles.size(); j++)
+    {
+        if ((*obstacle)->Check_collision((*Active_drone)) && ((*obstacle).get() != (Active_drone))) // don't check the acutal drone
+        {
+            std::cout << "Drone collides with " << (*obstacle)->Get_typeID() << " " << std::endl;
+            std::cout << "Changing route..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::nanoseconds(500000000));
+            int extra_route = Rand_num_generator(50, 100);
+            int extra_angle = Rand_num_generator(45, 180);
+
+            double er = (double)extra_route / 90;
+
+            set_Rotation_OZ(rot, extra_angle);
+
+            forward = Vector3D({er, 0, 0});
+            forward = rot * forward;
+
+            set_Rotation_OZ(rot, 1);
+            while (i < std::abs(extra_angle)) // Rotate
+            {
+                Active_drone->Move(rot, Vector3D());
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
+                Draw();
+                i++;
+            }
+            i = 0;
+
+            set_Rotation_OZ(rot, 0);
+            while (i < 90) // go forward
+            {
+                Active_drone->Move(rot, forward);
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
+                Draw();
+                i++;
+            }
+            i = 0;
+
+            set_Rotation_OZ(rot, -1);
+            while (i < std::abs(extra_angle)) // Rotate
+            {
+                Active_drone->Move(rot, Vector3D());
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000 / 60));
+                Draw();
+                i++;
+            }
+            i = 0;
+
+            obstacle = Obstacles.begin();
+            j = 0;
+            col++;
+        }
+
+        if (col == 0)
+        {
+            obstacle++;
+        }
+        col = 0;
+    }
+
+    std::cout << std::endl
+              << "Landing..." << std::endl;
 
     return true;
 }

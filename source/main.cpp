@@ -8,33 +8,6 @@ int main()
 {
     system("clear");
 
-    // RoundMountain test(20, 100);
-
-    // PzG::LaczeDoGNUPlota Lacze;
-    // Lacze.DodajNazwePliku(test.Get_file_path().c_str())
-    //     .ZmienSposobRys(PzG::SR_Ciagly)
-    //     .ZmienSzerokosc(2)
-    //     .ZmienKolor(8);
-    // Lacze.DodajNazwePliku(test.Get_file_path().c_str())
-    //     .ZmienSposobRys(PzG::SR_Punktowy)
-    //     .ZmienSzerokosc(1)
-    //     .ZmienKolor(5);
-    // Lacze.Inicjalizuj();
-    // Lacze.ZmienTrybRys(PzG::TR_3D);
-    // Lacze.UstawZakresX(-40, 40);
-    // Lacze.UstawZakresY(-40, 40);
-    // Lacze.UstawZakresZ(-30, 120);
-    // Lacze.UstawRotacjeXZ(64, 65);
-
-    // Lacze.Rysuj();
-    // char a;
-    // std::cin >> a;
-    // std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000));
-
-    // test.Set_in_scene(50, 50, 25);
-
-    // Lacze.Rysuj();
-    //std::this_thread::sleep_for(std::chrono::nanoseconds(1000000000));
     {
         Scene scene_3D;
 
@@ -55,7 +28,6 @@ int main()
         {
             std::cout << "Choice (m-menu):\t";
             std::cin >> option;
-            //system("clear");
 
             if (option != 'p' && option != 'e' && option != 'a' && option != 'c' && option != 'r' && option != 'm' && option != 'q' && option != 'd' && option != 'l')
             {
